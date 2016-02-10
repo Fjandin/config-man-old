@@ -7,8 +7,6 @@ const get = require('lodash/get');
 const path = require('path');
 const fs = require('fs');
 
-const schema = require('./config-man-settings.json').schema;
-
 // Object that holds the config
 const configData = {};
 
@@ -19,9 +17,10 @@ const init = (o, sync) => {
     }
 
     const options = Object.assign({
-        schema,
         cwd: __dirname
     }, o);
+
+    options.schema = require(path.join(options.cwd, 'config-man.json')).schema;
 
     // Get default values from schema
     const defaultConfig = {};
