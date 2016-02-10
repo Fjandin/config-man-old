@@ -1,0 +1,21 @@
+{
+  "name": "config-man",
+  "version": "0.0.1",
+  "description": "Config manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "config",
+    "json",
+    "argv",
+    "env",
+    "external"
+  ],
+  "author": "René Bischoff <rene.bischoff@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.3.0"
+  }
+}
