@@ -20,7 +20,10 @@ const init = (o, sync) => {
         cwd: __dirname
     }, o);
 
-    options.schema = require(path.join(options.cwd, 'config-man.json')).schema;
+    if (!fs.existsSync(path.join(options.cwd, 'config-man.json'))) {
+        console.warn('You need to add a config-man.json file to your root.'); // eslint-disable-line
+    }
+    options.schema = requireJsonSync(path.join(options.cwd, 'config-man.json')).schema || [];
 
     // Get default values from schema
     const defaultConfig = {};
