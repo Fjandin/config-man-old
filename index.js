@@ -13,26 +13,29 @@ const configData = {};
 const init = (o, sync) => {
     // We are not supposed to call init more than once
     if (configData._init) {
-        throw new Error('ConfigMan already initialized once.');
+        throw new Error('CONFIG-MAN: ConfigMan already initialized once.');
     }
 
     const options = Object.assign({
-        cwd: __dirname
+        cwd: __dirname,
+        externalConfig: []
     }, o);
 
     if (!fs.existsSync(path.join(options.cwd, 'config-man.json'))) {
-        console.warn('You need to add a config-man.json file to your root.'); // eslint-disable-line
+        console.warn('CONFIG-MAN: You need to add a config-man.json file to your root.'); // eslint-disable-line
     }
     options.schema = requireJsonSync(path.join(options.cwd, 'config-man.json')).schema || [];
 
+    const CONFIGS = {};
+
     // Get default values from schema
-    const defaultConfig = {};
+    CONFIGS.DEFAULT = {};
     options.schema.forEach((option) => {
-        option.default !== undefined && set(defaultConfig, option.key, option.default);
+        option.default !== undefined && set(CONFIGS.DEFAULT, option.key, option.default);
     });
 
     // Get config from arguments
-    const argConfig = options.schema.reduce((red, option) => {
+    CONFIGS.ARG = options.schema.reduce((red, option) => {
         let index = process.argv.findIndex((a) => a === '-' + option.key);
         if (index > -1 && option.type.match(/^(number|string)$/)) {
             let value = process.argv[index + 1] || '';
@@ -47,7 +50,7 @@ const init = (o, sync) => {
     }, {});
 
     // Get config from environment
-    const envConfig = options.schema.reduce((red, option) => {
+    CONFIGS.ENV = options.schema.reduce((red, option) => {
         let envKey = 'CM_' + option.key.replace(/\./g, '_').toUpperCase();
         let value = process.env[envKey];
         if (value !== undefined) {
@@ -62,23 +65,16 @@ const init = (o, sync) => {
     }, {});
 
     const parseResults = (results) => {
-        const jsonPackage = results[0];
-        const jsonConfig = results[1];
+        const jsonPackage = results.shift();
 
-        merge(configData,
-            defaultConfig,
-            jsonConfig,
-            argConfig,
-            envConfig,
-            {
-                meta: {
-                    name: jsonPackage.name,
-                    version: jsonPackage.version,
-                    init: true,
-                    options: options
-                }
+        merge.apply(null, [configData].concat(results).concat({
+            meta: {
+                name: jsonPackage.name,
+                version: jsonPackage.version,
+                init: true,
+                options: options
             }
-        );
+        }));
 
         // Freeze config
         Object.freeze(configData);
@@ -102,26 +98,54 @@ const init = (o, sync) => {
             .filter((e) => e);
         if (errors.length) {
             errors.forEach((error) => console.error(error)); // eslint-disable-line
-            throw new Error('Invalid config');
+            throw new Error('CONFIG-MAN: Invalid config');
         }
     };
 
     // Syncronous initialize (remote db not available for Syncronous init)
     if (sync) {
-        let results = [
+        let results = [requireJsonSync(path.join(options.cwd, 'package.json'))].concat(options.configs.map((config) => {
+            if (typeof config === 'string') {
+                if (config === 'JSON') {
+                    return requireJsonSync(path.join(options.cwd, 'config.json'));
+                }
+                if (!CONFIGS[config]) {
+                    throw new Error('CONFIG-MAN: Unknown config type "' + config + '"');
+                }
+                return CONFIGS[config];
+            } else if (typeof config.then === 'function') {
+                throw new Error('CONFIG-MAN: You cannot add asyncronous configs to initSync call');
+            }
+            return config;
+        }));
+
+        results = [
             requireJsonSync(path.join(options.cwd, 'package.json')),
             requireJsonSync(path.join(options.cwd, 'config.json'))
-        ];
+        ].concat(options.externalConfig.map((config) => {
+            return config;
+        }));
         parseResults(results);
         return true;
     }
 
     // Asyncronous initialize
-    return Promise.all([
-        requireJson(path.join(options.cwd, 'package.json')),
-        requireJson(path.join(options.cwd, 'config.json'))
-    ])
-    .then(parseResults);
+    let asyncResults = [requireJson(path.join(options.cwd, 'package.json'))].concat(options.configs.map((config) => {
+        if (typeof config === 'string') {
+            if (config === 'JSON') {
+                return requireJson(path.join(options.cwd, 'config.json'));
+            }
+            if (!CONFIGS[config]) {
+                throw new Error('CONFIG-MAN: Unknown config type "' + config + '"');
+            }
+            return Promise.resolve(CONFIGS[config]);
+        } else if (typeof config.then !== 'function') {
+            return Promise.resolve(config);
+        }
+        return config;
+    }));
+
+    return Promise.all(asyncResults).then(parseResults);
 };
 
 // Get a config value
@@ -140,12 +164,15 @@ module.exports.initSync = (o) => init(o, true);
 
 // Get a config key
 function getConfigKey(obj, key, noThrow) {
+    if (!obj || !obj.meta || !obj.meta.init) {
+        throw new Error('CONFIG-MAN: Config-man is not initialized');
+    }
     if (!key || typeof (key) !== 'string') {
-        throw new Error('config.get expects (key<string>) got "' + key + '"');
+        throw new Error('CONFIG-MAN: config.get expects (key<string>) got "' + key + '"');
     }
     let value = get(obj, key, undefined);
     if (!noThrow && value === undefined) {
-        throw new Error('config key "' + key + '" not found');
+        throw new Error('CONFIG-MAN: config key "' + key + '" not found');
     }
     return value;
 }
