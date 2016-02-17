@@ -1,6 +1,6 @@
 {
   "name": "config-man",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Config manager",
   "main": "index.js",
   "repository": "git@github.com:Fjandin/config-man.git",
