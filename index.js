@@ -13,7 +13,8 @@ const getConfig = {
     env: require('./lib/config-env.js'),
     arg: require('./lib/config-arg.js'),
     default: require('./lib/config-default.js'),
-    json: require('./lib/config-json.js')
+    json: require('./lib/config-json.js'),
+    local: require('./lib/config-local.js')
 };
 
 // Object that holds the config
