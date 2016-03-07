@@ -18,6 +18,6 @@
   "author": "René Bischoff <rene.bischoff@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.3.0"
+    "lodash": "4.3.0"
   }
 }
