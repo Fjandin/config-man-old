@@ -19,5 +19,8 @@
   "license": "ISC",
   "dependencies": {
     "lodash": "4.3.0"
+  },
+  "devDependencies": {
+    "eslint": "2.3.0"
   }
 }
