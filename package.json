@@ -18,7 +18,8 @@
   "author": "René Bischoff <rene.bischoff@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "lodash": "4.3.0"
+    "aws-sdk": "2.2.42",
+    "lodash": "4.6.1"
   },
   "devDependencies": {
     "eslint": "2.3.0"
