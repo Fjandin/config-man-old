@@ -1,6 +1,6 @@
 {
   "name": "config-man",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "Config manager",
   "main": "index.js",
   "repository": "git@github.com:Fjandin/config-man.git",
@@ -8,6 +8,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "files": [
+    "lib/",
+    "index.js"
+  ],
   "keywords": [
     "config",
     "json",
@@ -18,10 +22,10 @@
   "author": "René Bischoff <rene.bischoff@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "2.2.42",
-    "lodash": "4.6.1"
+    "aws-sdk": "2.3.19",
+    "lodash": "4.13.1"
   },
   "devDependencies": {
-    "eslint": "2.3.0"
+    "eslint": "2.12.0"
   }
 }
