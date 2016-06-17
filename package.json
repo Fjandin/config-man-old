@@ -1,6 +1,6 @@
 {
   "name": "config-man",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Config manager",
   "main": "dist/index.js",
   "repository": {
