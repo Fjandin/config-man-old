@@ -1,0 +1,16 @@
+machine:
+    node:
+        version: 4.4.5
+dependencies:
+    override:
+        - npm install -g npm@3.8.9
+        - npm install
+test:
+    override:
+        - npm run eslint
+deployment:
+    production:
+        branch: master
+        commands:
+            - npm run build
+            - npm run 2npm

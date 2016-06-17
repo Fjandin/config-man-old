@@ -10,7 +10,8 @@
     "globals": {
         "require": false,
         "exports": true,
-        "module": true
+        "module": true,
+        "window": false
     },
     "rules": {
         "no-console": 1,
@@ -41,6 +42,7 @@
         "no-with": 2,
         "radix": 2,
         "wrap-iife": [2, "inside"],
+        "no-unused-vars": [2, {"argsIgnorePattern": "next"}],
 
         "dot-notation": 1,
         "guard-for-in": 1,
@@ -53,6 +55,7 @@
         "no-multi-str": 1,
         "no-octal-escape": 1,
         "no-param-reassign": [1, {"props": false}],
+        "no-process-env": 1,
         "no-self-compare": 1,
         "no-throw-literal": 1,
         "no-unused-expressions": [1, {"allowShortCircuit": true }],

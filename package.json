@@ -2,13 +2,23 @@
   "name": "config-man",
   "version": "0.0.9",
   "description": "Config manager",
-  "main": "index.js",
-  "repository": "git@github.com:Fjandin/config-man.git",
-  "readme": "README.md",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fjandin/config-man.git"
+  },
+  "homepage": "https://github.com/Fjandin/config-man#readme",
+  "bugs": {
+    "url": "https://github.com/Fjandin/config-man/issues"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "eslint": "eslint --quiet . --ext=jsx --ext=js",
+    "build": "rm -rf dist/; ./node_modules/babel-cli/bin/babel.js -D -d dist index.js; ./node_modules/babel-cli/bin/babel.js -D -d dist lib/*;",
+    "2npm": "./node_modules/publish/bin/publish.js"
   },
   "files": [
+    "dist/",
     "lib/",
     "index.js"
   ],
@@ -20,12 +30,18 @@
     "external"
   ],
   "author": "René Bischoff <rene.bischoff@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "aws-sdk": "2.3.19",
+    "aws-sdk": "2.4.0",
+    "eslint": "2.13.0",
     "lodash": "4.13.1"
   },
   "devDependencies": {
-    "eslint": "2.12.0"
+    "babel-cli": "6.10.1",
+    "babel-core": "6.9.1",
+    "babel-preset-es2015": "6.9.0",
+    "babel-preset-stage-1": "6.5.0",
+    "eslint": "2.12.0",
+    "publish": "0.6.0"
   }
 }
